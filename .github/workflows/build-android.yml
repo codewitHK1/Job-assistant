@@ -129,12 +129,7 @@ jobs:
           echo "android.enableJetifier=false" >> ~/.gradle/gradle.properties
 
           if [ ! -f gradle.properties ]; then
-            cat << 'EOF' > gradle.properties
-android.useAndroidX=true
-android.enableJetifier=false
-android.nonTransitiveRClass=true
-org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
-EOF
+            printf "android.useAndroidX=true\nandroid.enableJetifier=false\nandroid.nonTransitiveRClass=true\norg.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8\n" > gradle.properties
           else
             grep -q "android.useAndroidX" gradle.properties || echo "android.useAndroidX=true" >> gradle.properties
           fi
