@@ -1,0 +1,6 @@
+{
+  "name": "JobPilot AI",
+  "description": "AI-powered job application copilot: CV parsing, ATS master resume, instant job description tailor for tailored resumes, cover letters, and screening answers, plus multi-source job matching and application tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
