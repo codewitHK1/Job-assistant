@@ -123,6 +123,22 @@ jobs:
             cp ~/.android/debug.keystore ./debug.keystore
           fi
 
+          # 5. Ensure android.useAndroidX is explicitly configured in all Gradle property locations
+          mkdir -p ~/.gradle
+          echo "android.useAndroidX=true" >> ~/.gradle/gradle.properties
+          echo "android.enableJetifier=false" >> ~/.gradle/gradle.properties
+
+          if [ ! -f gradle.properties ]; then
+            cat << 'EOF' > gradle.properties
+android.useAndroidX=true
+android.enableJetifier=false
+android.nonTransitiveRClass=true
+org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+EOF
+          else
+            grep -q "android.useAndroidX" gradle.properties || echo "android.useAndroidX=true" >> gradle.properties
+          fi
+
           echo "Keystore verified successfully at ~/.android/debug.keystore and ./debug.keystore"
 
       - name: Ensure Gradle Wrapper
@@ -146,9 +162,9 @@ jobs:
           fi
 
           if [ "$BUILD_VARIANT" = "release" ]; then
-            $GRADLE_CMD assembleRelease --stacktrace --no-daemon
+            $GRADLE_CMD assembleRelease -Pandroid.useAndroidX=true -Pandroid.enableJetifier=false --stacktrace --no-daemon
           else
-            $GRADLE_CMD assembleDebug --stacktrace --no-daemon
+            $GRADLE_CMD assembleDebug -Pandroid.useAndroidX=true -Pandroid.enableJetifier=false --stacktrace --no-daemon
           fi
 
       - name: Locate and Package Compiled APK
