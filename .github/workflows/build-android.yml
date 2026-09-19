@@ -52,8 +52,30 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+      # Android SDK is pre-installed on GitHub Actions runners (/usr/local/lib/android/sdk).
+      # Replacing android-actions/setup-android@v3 prevents the fatal 'Failed to find package tools' error.
+      - name: Configure Android SDK & Accept Licenses
+        run: |
+          echo "=== Configuring Android SDK & Accepting Licenses ==="
+          export ANDROID_HOME=${ANDROID_HOME:-/usr/local/lib/android/sdk}
+          echo "ANDROID_HOME: $ANDROID_HOME"
+          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+          echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
+
+          # Pre-accept all Android SDK licenses directly
+          mkdir -p "$ANDROID_HOME/licenses"
+          printf "\n24333f8a63b6825ea9c5514f83c2829b004d1fee" > "$ANDROID_HOME/licenses/android-sdk-license"
+          printf "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
+          printf "\nd975f751698a77b662f1254ddbeed3901e976f5a" > "$ANDROID_HOME/licenses/intel-android-extra-license"
+          printf "\ne9acab5b5f15c81849d547794381ed56762995db" > "$ANDROID_HOME/licenses/google-gdk-license"
+          printf "\n601085b94cd77f0b54ff86406957099fed7926c4" > "$ANDROID_HOME/licenses/android-googletv-license"
+          printf "\n33b6a2b64607f11b759f320ef9dff4ae5c47d97a" > "$ANDROID_HOME/licenses/mips-android-sysimage-license"
+
+          # Also run sdkmanager --licenses non-interactively if present
+          if command -v sdkmanager >/dev/null 2>&1; then
+            yes | sdkmanager --licenses >/dev/null 2>&1 || true
+          fi
+          echo "Android SDK configured and licenses verified."
 
       # Using Gradle 8.7 for guaranteed Android Gradle Plugin 8.x compatibility
       - name: Setup Gradle
@@ -117,10 +139,16 @@ jobs:
           BUILD_VARIANT="${{ inputs.build_type || 'debug' }}"
           echo "Building variant: $BUILD_VARIANT"
 
-          if [ "$BUILD_VARIANT" = "release" ]; then
-            ./gradlew assembleRelease --stacktrace --no-daemon
+          if [ -f gradlew ]; then
+            GRADLE_CMD="./gradlew"
           else
-            ./gradlew assembleDebug --stacktrace --no-daemon
+            GRADLE_CMD="gradle"
+          fi
+
+          if [ "$BUILD_VARIANT" = "release" ]; then
+            $GRADLE_CMD assembleRelease --stacktrace --no-daemon
+          else
+            $GRADLE_CMD assembleDebug --stacktrace --no-daemon
           fi
 
       - name: Locate and Package Compiled APK
