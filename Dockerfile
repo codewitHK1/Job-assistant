@@ -1,11 +1,11 @@
 # Multi-stage production build for JobPilot AI (React 19 + Vite + Express Node.js backend)
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 
 # Install dependencies first for better caching
 COPY package*.json ./
-RUN npm ci
+RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
 # Copy source code and config files
 COPY . .
@@ -14,7 +14,7 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Production Runner
-FROM node:20-alpine AS runner
+FROM node:22-alpine AS runner
 
 WORKDIR /app
 
@@ -23,7 +23,7 @@ ENV PORT=3000
 
 # Install only production dependencies
 COPY package*.json ./
-RUN npm ci --only=production
+RUN if [ -f package-lock.json ]; then npm ci --only=production; else npm install --only=production; fi
 
 # Copy compiled artifacts from builder stage
 COPY --from=builder /app/dist ./dist

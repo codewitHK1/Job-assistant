@@ -127,7 +127,7 @@ JobPilot AI is architected as a full-stack web application with an integrated mu
 ### Tech Stack
 
 - **Frontend**: React 19, TypeScript, Tailwind CSS, Lucide React, Motion (`motion/react`)
-- **Backend**: Node.js 20+, Express.js, `esbuild` for CommonJS server bundling
+- **Backend**: Node.js 22 LTS (Node 20+ supported), Express.js, `esbuild` for CommonJS server bundling
 - **AI / LLM**: `@google/genai` (Google Gen AI SDK) using `gemini-2.5-flash`
 - **Document Processing**: `pdf-parse`, `mammoth` (DOCX extraction)
 - **Mobile**: Kotlin 1.9+, Android SDK 34, Jetpack Compose, Room Database
@@ -173,7 +173,7 @@ JobPilot AI is architected as a full-stack web application with an integrated mu
 ### Getting Started Locally
 
 #### Prerequisites
-- **Node.js**: v18.0.0 or higher (v20+ recommended)
+- **Node.js**: v20+ or v22 LTS (recommended)
 - **npm**: v9.0.0 or higher
 - **Gemini API Key**: Obtainable from [Google AI Studio](https://aistudio.google.com/)
 

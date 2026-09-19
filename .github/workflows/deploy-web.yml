@@ -9,6 +9,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  # Allows backward compatibility for any action runner dependencies
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: "true"
+
 jobs:
   build_and_test:
     name: Build & Validate Web App
@@ -18,14 +22,22 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 20
+      - name: Setup Node.js 22 LTS
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'npm'
+          node-version: 22
+          # Only enable npm cache if package-lock.json is present
+          cache: ${{ hashFiles('package-lock.json') != '' && 'npm' || '' }}
 
       - name: Install Dependencies
-        run: npm ci
+        run: |
+          if [ -f package-lock.json ]; then
+            echo "package-lock.json detected. Running clean install (npm ci)..."
+            npm ci
+          else
+            echo "No package-lock.json found. Running npm install and creating lockfile..."
+            npm install
+          fi
 
       - name: Run Type Check & Lint
         run: npm run lint
