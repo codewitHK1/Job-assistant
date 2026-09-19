@@ -9,6 +9,9 @@
     "start": "node dist/server.cjs",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
+    "deploy": "./scripts/deploy.sh",
+    "deploy:docker": "./scripts/deploy.sh docker",
+    "deploy:check": "./scripts/deploy.sh check",
     "lint": "tsc --noEmit"
   },
   "dependencies": {
