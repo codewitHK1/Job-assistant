@@ -143,11 +143,10 @@ JobPilot AI is architected as a full-stack web application with an integrated mu
 │   └── deploy-web.yml       # CI workflow: tests, lints, and validates web bundle
 ├── android/                 # Native Android Jetpack Compose app module
 │   ├── build.gradle.kts     # Module Gradle configuration (Compose, Room, Coroutines)
-│   ├── src/main/            # AndroidManifest.xml and application resources
-│   ├── ui/screens/          # Compose UI screens
-│   ├── presentation/        # ViewModels and UI state
-│   ├── data/local/          # Room database and DAOs
-│   └── domain/models/       # Kotlin domain data classes
+│   ├── proguard-rules.pro   # ProGuard release configuration
+│   └── src/main/
+│       ├── AndroidManifest.xml # Android app manifest
+│       └── java/com/jobpilot/ai/ # Kotlin Jetpack Compose UI, ViewModels, Room DB
 ├── data/                    # Local storage directory (persisted active CV)
 ├── public/                  # Static assets and icons
 ├── scripts/

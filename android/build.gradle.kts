@@ -54,10 +54,14 @@ android {
 
     sourceSets {
         getByName("main") {
-            java.srcDirs(".", "src/main/java")
+            java.srcDirs("src/main/java")
             manifest.srcFile("src/main/AndroidManifest.xml")
         }
     }
+}
+
+kapt {
+    correctErrorTypes = true
 }
 
 dependencies {
