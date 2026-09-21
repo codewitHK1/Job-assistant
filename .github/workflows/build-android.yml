@@ -166,10 +166,14 @@ jobs:
         id: find_apk
         run: |
           echo "=== Searching for compiled APK outputs ==="
-          APK_PATH=$(find . -type f -name "*.apk" ! -name "*unaligned*" | head -n 1)
+          # Prioritize signed release/debug apk over unsigned or unaligned
+          APK_PATH=$(find . -type f -name "*.apk" ! -name "*unaligned*" ! -name "*unsigned*" | head -n 1)
 
           if [ -z "$APK_PATH" ]; then
-            # Fallback search if unaligned check filtered everything
+            APK_PATH=$(find . -type f -name "*.apk" ! -name "*unaligned*" | head -n 1)
+          fi
+
+          if [ -z "$APK_PATH" ]; then
             APK_PATH=$(find . -type f -name "*.apk" | head -n 1)
           fi
 
